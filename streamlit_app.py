@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import ipaddress
+import inspect
 import os
 import re
 import socket
@@ -1727,13 +1728,17 @@ if scan_clicked:
             text=f"Collected {pages_found} page(s): {current_url}",
         )
 
-    pages = crawl_website(
-        normalized_url,
-        max_pages=effective_page_limit,
-        max_depth=effective_depth,
-        exclude_paths=exclude_paths,
-        status_callback=update_crawl_progress,
-    )
+    crawl_options = {
+        "max_pages": effective_page_limit,
+        "status_callback": update_crawl_progress,
+    }
+    supported_crawl_options = inspect.signature(crawl_website).parameters
+    if "max_depth" in supported_crawl_options:
+        crawl_options["max_depth"] = effective_depth
+    if "exclude_paths" in supported_crawl_options:
+        crawl_options["exclude_paths"] = exclude_paths
+
+    pages = crawl_website(normalized_url, **crawl_options)
     pages_scanned = len(pages)
     issues: list[dict[str, str]] = []
 

@@ -45,7 +45,7 @@ MAX_PAGES = 25
 MAX_CHARS_PER_PAGE = 8000
 REQUEST_TIMEOUT = 15
 MAX_CRAWL_DEPTH = 2
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.5")
 
 OUTPUT_DIRECTORY = Path(__file__).resolve().parent
 HTML_REPORT_PATH = OUTPUT_DIRECTORY / "typo_report.html"
@@ -207,6 +207,8 @@ def clean_page_text(soup: BeautifulSoup) -> str:
 def crawl_website(
     base_url: str,
     max_pages: int = MAX_PAGES,
+    max_depth: int = MAX_CRAWL_DEPTH,
+    exclude_paths: list[str] | None = None,
     status_callback: Any | None = None,
 ) -> list[dict[str, str]]:
     """Crawl a limited number of internal pages using breadth-first search."""
@@ -229,10 +231,17 @@ def crawl_website(
     queued = {start_url}
     visited: set[str] = set()
     pages: list[dict[str, str]] = []
+    excluded_fragments = [
+        fragment.strip().lower()
+        for fragment in (exclude_paths or [])
+        if fragment.strip()
+    ]
 
     while queue and len(pages) < max_pages:
         url, depth = queue.popleft()
         if url in visited:
+            continue
+        if any(fragment in urlsplit(url).path.lower() for fragment in excluded_fragments):
             continue
         visited.add(url)
 
@@ -260,10 +269,15 @@ def crawl_website(
             if status_callback:
                 status_callback(len(pages), final_url)
 
-        if depth >= MAX_CRAWL_DEPTH:
+        if depth >= max_depth:
             continue
 
         for link in collect_internal_links(soup, final_url, start_url):
+            if any(
+                fragment in urlsplit(link).path.lower()
+                for fragment in excluded_fragments
+            ):
+                continue
             if link not in visited and link not in queued:
                 queue.append((link, depth + 1))
                 queued.add(link)
