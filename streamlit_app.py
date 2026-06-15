@@ -2051,19 +2051,23 @@ with st.sidebar:
     )
     st.session_state.last_target_url = target_url
     st.html('<div class="sidebar-section-label">Scan options</div>')
-    scan_mode = st.radio(
+    scan_mode = st.selectbox(
         "Analysis mode",
         options=["AI Scan", "Demo Preview"],
         index=0 if get_secret("OPENAI_API_KEY") else 1,
-        horizontal=True,
         help="AI Scan uses your API key. Demo Preview uses sample data.",
     )
     demo_mode = scan_mode == "Demo Preview"
     page_limit = st.slider("Maximum pages", 1, MAX_PAGES, min(10, MAX_PAGES))
-    crawl_depth = st.segmented_control(
+    crawl_depth = st.selectbox(
         "Crawl depth",
         options=[1, 2, 3],
-        default=2,
+        index=1,
+        format_func=lambda depth: {
+            1: "1 - Homepage links",
+            2: "2 - Recommended",
+            3: "3 - Deeper crawl",
+        }[depth],
         help="Higher depth follows links farther from the homepage.",
     )
     with st.expander("Advanced options"):
