@@ -1665,6 +1665,87 @@ def inject_styles() -> None:
               margin: 0 !important;
             }
           }
+
+          /* Cloud-safe control colors and readable labels. */
+          [data-testid="stSidebar"] [role="radiogroup"] {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 5px !important;
+            padding: 5px !important;
+            border: 1px solid #dce3ed !important;
+            border-radius: 13px !important;
+            background: #f1f4f9 !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label {
+            display: flex !important;
+            min-width: 0 !important;
+            min-height: 44px !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 7px !important;
+            margin: 0 !important;
+            padding: 8px !important;
+            border-radius: 9px !important;
+            background: transparent !important;
+            color: #627087 !important;
+            text-align: center !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label p,
+          [data-testid="stSidebar"] [role="radiogroup"] label span,
+          [data-testid="stSidebar"] [role="radiogroup"] label div {
+            color: #627087 !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+            background: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(25,48,86,.08) !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) p,
+          [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) span,
+          [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) div {
+            color: #174fc8 !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] input {
+            accent-color: #2864f0 !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSegmentedControl"] {
+            padding: 4px !important;
+            border: 1px solid #dce3ed !important;
+            border-radius: 13px !important;
+            background: #f1f4f9 !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSegmentedControl"] button {
+            min-width: 0 !important;
+            min-height: 40px !important;
+            border-color: transparent !important;
+            border-radius: 8px !important;
+            background: transparent !important;
+            color: #627087 !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSegmentedControl"]
+          button[aria-pressed="true"] {
+            border-color: #2864f0 !important;
+            background: #ffffff !important;
+            color: #174fc8 !important;
+            box-shadow: 0 4px 12px rgba(25,48,86,.08) !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSlider"] div[role="slider"] {
+            border-color: #2864f0 !important;
+            background: #2864f0 !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSlider"]
+          div[data-baseweb="slider"] > div > div {
+            background-color: #2864f0;
+          }
         </style>
         """
     )
