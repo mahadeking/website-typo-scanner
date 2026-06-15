@@ -23,7 +23,6 @@ from typo_scanner import (
     crawl_website,
     generate_csv_report,
     generate_html_report,
-    get_demo_results,
     normalize_url,
 )
 
@@ -536,6 +535,679 @@ def inject_styles() -> None:
               flex-direction: column;
             }
           }
+
+          /* Minimal dark dashboard theme inspired by the supplied reference. */
+          :root {
+            --ink: #17151d;
+            --muted: #77737f;
+            --line: #e7e4ea;
+            --blue: #a695e8;
+            --blue-dark: #7665c0;
+            --surface: #fbfafb;
+            --canvas: #aaa8ad;
+            --green: #8fcf62;
+            --red: #f0645d;
+            --lavender: #a99add;
+            --lime: #bce998;
+            --shell: #111111;
+            --panel-dark: #211f27;
+          }
+
+          .stApp {
+            background: #aaa8ad;
+          }
+
+          [data-testid="stHeader"] {
+            height: 2.4rem;
+            background: transparent;
+          }
+
+          [data-testid="stAppViewContainer"] > .main {
+            margin: 28px 34px 34px 0;
+            overflow: hidden;
+            border-radius: 0 22px 22px 0;
+            background:
+              radial-gradient(circle at 5% 0%, rgba(139, 75, 43, .36), transparent 25rem),
+              #111111;
+            box-shadow: 0 26px 70px rgba(24, 20, 28, .28);
+          }
+
+          [data-testid="stMainBlockContainer"] {
+            max-width: 1500px;
+            padding: 2.2rem 2.3rem 3rem;
+          }
+
+          [data-testid="stSidebar"] {
+            margin: 28px 0 34px 34px;
+            border: 0;
+            border-radius: 22px 0 0 22px;
+            background:
+              radial-gradient(circle at 0% 0%, rgba(136, 72, 41, .52), transparent 20rem),
+              #111111;
+            box-shadow: -12px 26px 70px rgba(24, 20, 28, .22);
+          }
+
+          [data-testid="stSidebarContent"] {
+            padding: 1.4rem 1rem 1.4rem;
+          }
+
+          [data-testid="stSidebar"] label,
+          [data-testid="stSidebar"] p,
+          [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+            color: #aaa6af;
+          }
+
+          [data-testid="stSidebar"] [data-baseweb="input"] > div,
+          [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            border-color: #343139;
+            background: #211f27;
+          }
+
+          [data-testid="stSidebar"] input {
+            color: #f6f4f7;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] {
+            gap: 5px;
+            padding: 5px;
+            border: 1px solid #302d35;
+            border-radius: 13px;
+            background: #1c1a20;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label {
+            padding: 6px 8px;
+            border-radius: 9px;
+          }
+
+          [data-testid="stSidebar"] hr {
+            border-color: #302d35;
+          }
+
+          .sidebar-brand {
+            margin: -4px -1px 12px;
+            padding: 18px 16px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .035);
+            box-shadow: none;
+          }
+
+          .sidebar-brand strong {
+            color: #f8f6f8;
+            font-size: 18px;
+          }
+
+          .sidebar-brand span {
+            color: #9e99a5;
+          }
+
+          .sidebar-section-label {
+            color: #77727e;
+          }
+
+          .model-card {
+            border-color: #343139;
+            background: #211f27;
+          }
+
+          .model-card span {
+            color: #85808b;
+          }
+
+          .model-card strong {
+            color: #d8f1b9;
+          }
+
+          .stButton > button[kind="primary"] {
+            border-radius: 12px;
+            background: #f7f5f7;
+            box-shadow: none;
+            color: #151318;
+          }
+
+          .stButton > button[kind="primary"]:hover {
+            background: var(--lime);
+            box-shadow: none;
+            color: #151318;
+          }
+
+          [data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+            border-color: #37333c;
+            background: #211f27;
+            color: #beb9c3;
+          }
+
+          .report-header {
+            margin: 2px 0 24px;
+            text-align: left;
+          }
+
+          .report-header h1 {
+            color: #faf8fa;
+            font-size: clamp(34px, 4vw, 52px);
+          }
+
+          .report-header p {
+            color: #99949f;
+            font-size: 14px;
+          }
+
+          .metric-card {
+            min-height: 112px;
+            border-color: rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            background: #211f27;
+            box-shadow: none;
+          }
+
+          .metric-label {
+            color: #8f8995;
+          }
+
+          .metric-value {
+            color: #f8f6f8;
+          }
+
+          .metric-value.is-domain {
+            color: #c8bdf1;
+          }
+
+          .metric-note {
+            color: #77727e;
+          }
+
+          .dashboard-card {
+            min-height: 310px;
+            border: 0;
+            border-radius: 18px;
+            background: #f8f7f8;
+            box-shadow: none;
+          }
+
+          .dashboard-card h3 {
+            color: #1b181f;
+            font-size: 17px;
+          }
+
+          .donut-center {
+            background: #f8f7f8;
+            box-shadow: inset 0 0 0 1px #e5e1e7;
+          }
+
+          .bar-track {
+            background: #e8e5ea;
+          }
+
+          .bar-fill {
+            background: linear-gradient(90deg, #a99add, #c3b8eb);
+          }
+
+          .section-heading {
+            color: #f8f6f8;
+          }
+
+          .section-copy {
+            color: #8e8994;
+          }
+
+          .stDownloadButton > button {
+            border-color: #39353e;
+            background: #211f27;
+            color: #e5e1e7;
+          }
+
+          .stDownloadButton > button:hover {
+            border-color: #a99add;
+            color: #ffffff;
+          }
+
+          .results-shell {
+            border: 0;
+            border-radius: 18px;
+            background: #f8f7f8;
+            box-shadow: none;
+          }
+
+          .results-table th {
+            background: #211f27;
+            color: #f8f6f8;
+          }
+
+          .results-table td {
+            border-color: #e8e5ea;
+            color: #625e68;
+          }
+
+          .results-table a {
+            color: #7761c5;
+          }
+
+          .error-pill, .type-pill {
+            background: #fde9e7;
+            color: #c94d47;
+          }
+
+          .fix-pill {
+            background: #e9f6df;
+            color: #4c8c2d;
+          }
+
+          .context-hit {
+            color: #d1554e;
+          }
+
+          .empty-dashboard {
+            border-color: #343139;
+            background: #211f27;
+          }
+
+          .empty-dashboard strong {
+            color: #f8f6f8;
+          }
+
+          .empty-dashboard span {
+            color: #8e8994;
+          }
+
+          [data-testid="stAlert"] {
+            border: 1px solid #38343c;
+            background: #211f27;
+            color: #d8d4dc;
+          }
+
+          [data-testid="stExpander"] {
+            border-color: #38343c;
+            border-radius: 16px;
+            background: #211f27;
+          }
+
+          [data-testid="stExpander"] summary {
+            color: #e2dee5;
+          }
+
+          @media (max-width: 900px) {
+            [data-testid="stAppViewContainer"] > .main {
+              margin: 10px;
+              border-radius: 18px;
+            }
+
+            [data-testid="stSidebar"] {
+              margin: 0;
+              border-radius: 0;
+            }
+
+            [data-testid="stMainBlockContainer"] {
+              padding: 1.4rem 1rem 2rem;
+            }
+          }
+
+          /* Final light glass theme. Kept last so it remains stable in cloud builds. */
+          :root {
+            --ink: #101314;
+            --muted: #7a8283;
+            --line: rgba(178, 190, 190, .34);
+            --blue: #9fd941;
+            --blue-dark: #78b51b;
+            --surface: rgba(255, 255, 255, .82);
+            --canvas: #e6eef0;
+            --green: #7ebc23;
+            --red: #ef625d;
+            --lavender: #a6b6bd;
+            --lime: #b9ec63;
+            --shell: rgba(246, 249, 249, .88);
+            --panel-dark: #8c9b9b;
+          }
+
+          .stApp {
+            background:
+              radial-gradient(circle at 16% 5%, rgba(255,255,255,.98), transparent 24rem),
+              radial-gradient(circle at 90% 18%, rgba(184,202,231,.58), transparent 32rem),
+              linear-gradient(145deg, #edf4f3 0%, #dbe6eb 48%, #bccde0 100%);
+            color: var(--ink);
+          }
+
+          [data-testid="stHeader"] {
+            height: 2.8rem;
+            background: transparent;
+          }
+
+          [data-testid="stAppViewContainer"] > .main {
+            margin: 24px 28px 28px 0;
+            overflow: visible;
+            border: 1px solid rgba(255,255,255,.82);
+            border-left: 0;
+            border-radius: 0 26px 26px 0;
+            background: rgba(245, 249, 249, .79);
+            box-shadow: 0 24px 70px rgba(69, 88, 97, .16);
+            backdrop-filter: blur(24px);
+          }
+
+          [data-testid="stMainBlockContainer"] {
+            max-width: 1500px;
+            padding: 2.2rem 2.4rem 3rem;
+          }
+
+          [data-testid="stSidebar"] {
+            margin: 24px 0 28px 28px;
+            border: 1px solid rgba(255,255,255,.82);
+            border-right: 1px solid rgba(186,198,200,.28);
+            border-radius: 26px 0 0 26px;
+            background: rgba(248, 251, 250, .9);
+            box-shadow: -14px 24px 70px rgba(69, 88, 97, .13);
+            backdrop-filter: blur(24px);
+          }
+
+          [data-testid="stSidebarContent"] {
+            padding: 1.35rem 1rem 1.5rem;
+          }
+
+          [data-testid="stSidebar"] label,
+          [data-testid="stSidebar"] p,
+          [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+            color: #6f7879;
+          }
+
+          [data-testid="stSidebar"] [data-baseweb="input"] > div,
+          [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            border-color: rgba(166,180,181,.42);
+            background: rgba(255,255,255,.86);
+            box-shadow: 0 5px 16px rgba(92,108,110,.055);
+          }
+
+          [data-testid="stSidebar"] input {
+            color: #15191a;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] {
+            gap: 4px;
+            padding: 5px;
+            border: 1px solid rgba(166,180,181,.35);
+            border-radius: 13px;
+            background: rgba(236,241,240,.82);
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label {
+            padding: 6px 8px;
+            border-radius: 9px;
+            color: #555e5f;
+          }
+
+          [data-testid="stSidebar"] hr {
+            border-color: rgba(175,188,189,.3);
+          }
+
+          .sidebar-brand {
+            margin: -4px -1px 12px;
+            padding: 18px 16px;
+            border: 1px solid rgba(181,195,195,.35);
+            border-radius: 17px;
+            background:
+              radial-gradient(circle at 92% 15%, rgba(185,236,99,.42), transparent 7rem),
+              rgba(255,255,255,.74);
+            box-shadow: 0 12px 28px rgba(86,102,104,.08);
+          }
+
+          .sidebar-brand strong {
+            color: #111516;
+            font-size: 19px;
+          }
+
+          .sidebar-brand span {
+            color: #778081;
+          }
+
+          .sidebar-section-label {
+            color: #8a9393;
+          }
+
+          .model-card {
+            border-color: rgba(166,180,181,.36);
+            background: rgba(255,255,255,.68);
+          }
+
+          .model-card span {
+            color: #929a9a;
+          }
+
+          .model-card strong {
+            color: #568411;
+          }
+
+          .stButton > button[kind="primary"] {
+            border: 1px solid #91c737;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c5ef79, #a3dd49);
+            box-shadow: 0 10px 22px rgba(119,166,45,.18);
+            color: #17200d;
+          }
+
+          .stButton > button[kind="primary"]:hover {
+            background: #b8e766;
+            box-shadow: 0 12px 26px rgba(119,166,45,.24);
+            color: #10170a;
+          }
+
+          [data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+            border-color: rgba(166,180,181,.42);
+            background: rgba(255,255,255,.7);
+            color: #5f6868;
+          }
+
+          .report-header {
+            margin: 2px 0 24px;
+            text-align: left;
+          }
+
+          .report-header h1 {
+            color: #111516;
+            font-size: clamp(35px, 4vw, 52px);
+            font-weight: 650;
+            letter-spacing: -.055em;
+          }
+
+          .report-header p {
+            color: #7d8687;
+          }
+
+          .metric-card {
+            min-height: 112px;
+            border: 1px solid rgba(173,187,188,.33);
+            border-radius: 17px;
+            background: rgba(255,255,255,.75);
+            box-shadow: 0 12px 30px rgba(78,96,99,.07);
+            backdrop-filter: blur(14px);
+          }
+
+          .metric-label {
+            color: #8d9596;
+          }
+
+          .metric-value {
+            color: #111516;
+          }
+
+          .metric-value.is-domain {
+            color: #4f7f10;
+          }
+
+          .metric-note {
+            color: #969e9f;
+          }
+
+          .dashboard-card {
+            min-height: 310px;
+            border: 1px solid rgba(173,187,188,.34);
+            border-radius: 18px;
+            background: rgba(255,255,255,.82);
+            box-shadow: 0 14px 34px rgba(78,96,99,.075);
+            backdrop-filter: blur(14px);
+          }
+
+          .dashboard-card h3 {
+            color: #15191a;
+          }
+
+          .donut-center {
+            background: #f9fbfa;
+            box-shadow: inset 0 0 0 1px rgba(173,187,188,.35);
+          }
+
+          .bar-track {
+            background: #e8eeee;
+          }
+
+          .bar-fill {
+            background: linear-gradient(90deg, #9ed63f, #c4ed79);
+          }
+
+          .section-heading {
+            color: #15191a;
+          }
+
+          .section-copy {
+            color: #7d8687;
+          }
+
+          .stDownloadButton > button {
+            border-color: rgba(166,180,181,.42);
+            background: rgba(255,255,255,.74);
+            color: #303637;
+          }
+
+          .stDownloadButton > button:hover {
+            border-color: #9acb4a;
+            background: rgba(247,252,241,.9);
+            color: #38540e;
+          }
+
+          .results-shell {
+            border: 1px solid rgba(173,187,188,.34);
+            border-radius: 18px;
+            background: rgba(255,255,255,.84);
+            box-shadow: 0 14px 34px rgba(78,96,99,.075);
+          }
+
+          .results-table th {
+            background: #15191a;
+            color: #f8faf8;
+          }
+
+          .results-table td {
+            border-color: #e8eeee;
+            color: #60696a;
+          }
+
+          .results-table a {
+            color: #527f15;
+          }
+
+          .error-pill, .type-pill {
+            background: #feeeec;
+            color: #c95049;
+          }
+
+          .fix-pill {
+            background: #edf8df;
+            color: #518527;
+          }
+
+          .context-hit {
+            color: #d0544d;
+          }
+
+          .empty-dashboard {
+            border-color: rgba(160,177,178,.48);
+            background: rgba(255,255,255,.64);
+          }
+
+          .empty-dashboard strong {
+            color: #15191a;
+          }
+
+          .empty-dashboard span {
+            color: #7d8687;
+          }
+
+          [data-testid="stAlert"] {
+            border: 1px solid rgba(166,180,181,.35);
+            background: rgba(255,255,255,.74);
+            color: #4d5657;
+          }
+
+          [data-testid="stExpander"] {
+            border-color: rgba(166,180,181,.35);
+            border-radius: 16px;
+            background: rgba(255,255,255,.72);
+          }
+
+          [data-testid="stExpander"] summary {
+            color: #353b3c;
+          }
+
+          @media (max-width: 900px) {
+            [data-testid="stAppViewContainer"] > .main {
+              margin: 8px;
+              border: 1px solid rgba(255,255,255,.82);
+              border-radius: 19px;
+            }
+
+            [data-testid="stSidebar"] {
+              margin: 0;
+              border-radius: 0;
+            }
+
+            [data-testid="stMainBlockContainer"] {
+              padding: 1.35rem .95rem 2rem;
+            }
+          }
+
+          /* Production layout refinements. */
+          [data-testid="stSidebar"],
+          [data-testid="stSidebar"] > div:first-child {
+            width: 300px;
+            min-width: 300px;
+            max-width: 300px;
+          }
+
+          .dashboard-card {
+            min-height: 290px;
+            padding: 18px;
+          }
+
+          .donut-layout {
+            min-height: 200px;
+          }
+
+          .donut {
+            width: 132px;
+            height: 132px;
+          }
+
+          .donut-center {
+            width: 76px;
+            height: 76px;
+          }
+
+          .production-note {
+            margin-top: 10px;
+            padding: 11px 12px;
+            border: 1px solid rgba(159, 201, 82, .34);
+            border-radius: 12px;
+            background: rgba(241, 249, 227, .72);
+            color: #64724d;
+            font-size: 11px;
+            line-height: 1.45;
+          }
+
+          @media (max-width: 900px) {
+            [data-testid="stSidebar"],
+            [data-testid="stSidebar"] > div:first-child {
+              width: auto;
+              min-width: auto;
+              max-width: none;
+            }
+          }
         </style>
         """
     )
@@ -822,43 +1494,20 @@ with st.sidebar:
           <strong>Website Typo Scanner</strong>
           <span>Copy quality dashboard</span>
         </div>
-        <div class="sidebar-section-label">Scan target</div>
+        <div class="sidebar-section-label">New scan</div>
         """
-    )
-    url_preset = st.selectbox(
-        "Quick URL",
-        ["Custom website", "Modern Medicine Group", "Example website"],
-        help="Choose a saved example or enter any public website below.",
-    )
-    preset_urls = {
-        "Modern Medicine Group": "https://themodernmedicinegroup.com",
-        "Example website": "https://example.com",
-    }
-    default_url = preset_urls.get(
-        url_preset,
-        st.session_state.get("last_target_url", "https://themodernmedicinegroup.com"),
     )
     target_url = st.text_input(
         "Website URL",
-        value=default_url,
+        value=st.session_state.get(
+            "last_target_url", "https://themodernmedicinegroup.com"
+        ),
         placeholder="https://example.com",
-        help="Include https:// at the beginning.",
+        help="Enter a public homepage URL, including https://.",
     )
     st.session_state.last_target_url = target_url
     st.html('<div class="sidebar-section-label">Scan options</div>')
-    scan_mode = st.radio(
-        "Analysis mode",
-        ["Live AI scan", "Demo preview"],
-        index=0 if get_secret("OPENAI_API_KEY") else 1,
-        help="Demo preview uses sample data and makes no API call.",
-    )
-    demo_mode = scan_mode == "Demo preview"
     page_limit = st.slider("Maximum pages", 1, MAX_PAGES, min(10, MAX_PAGES))
-    show_report_preview = st.toggle(
-        "Show report preview",
-        value=True,
-        help="Display the full downloadable HTML report inside the app.",
-    )
     scan_clicked = st.button("Scan Website", type="primary", width="stretch")
     if st.button("Clear current results", width="stretch"):
         st.session_state.pop("scan_result", None)
@@ -873,8 +1522,16 @@ with st.sidebar:
         </div>
         """
     )
-    api_status = "Connected" if get_secret("OPENAI_API_KEY") else "Demo only"
+    api_status = "Connected" if get_secret("OPENAI_API_KEY") else "Not configured"
     st.caption(f"API status: {api_status}")
+    st.html(
+        """
+        <div class="production-note">
+          Live scans use your private OpenAI API key. Each completed scan can be
+          downloaded as an HTML dashboard or CSV file.
+        </div>
+        """
+    )
     if not get_secret("APP_PASSWORD"):
         st.warning(
             "No APP_PASSWORD is configured. Add one before sharing this app publicly."
@@ -888,62 +1545,54 @@ if scan_clicked:
 
     normalized_url = url_or_error
     api_key = get_secret("OPENAI_API_KEY")
-    if not demo_mode and not api_key:
+    if not api_key:
         st.error(
-            "OPENAI_API_KEY is not configured. Enable demo mode or add the key "
-            "to your local .env / Streamlit secrets."
+            "OPENAI_API_KEY is not configured. Add it to your local .env file "
+            "or Streamlit app secrets before starting a scan."
         )
         st.stop()
 
     progress = st.progress(0, text="Preparing scan...")
     status = st.empty()
 
-    if demo_mode:
-        status.info("Creating a dashboard with sample findings...")
-        issues = get_demo_results(normalized_url)
-        pages_scanned = len({issue["page_url"] for issue in issues})
-        progress.progress(100, text="Demo report ready")
-    else:
-        status.info("Crawling internal pages...")
+    status.info("Crawling internal pages...")
 
-        def update_crawl_progress(pages_found: int, current_url: str) -> None:
-            percent = min(40, max(2, int(pages_found / page_limit * 40)))
-            progress.progress(
-                percent,
-                text=f"Collected {pages_found} page(s): {current_url}",
-            )
-
-        pages = crawl_website(
-            normalized_url,
-            max_pages=page_limit,
-            status_callback=update_crawl_progress,
+    def update_crawl_progress(pages_found: int, current_url: str) -> None:
+        percent = min(40, max(2, int(pages_found / page_limit * 40)))
+        progress.progress(
+            percent,
+            text=f"Collected {pages_found} page(s): {current_url}",
         )
-        pages_scanned = len(pages)
-        issues: list[dict[str, str]] = []
 
-        if not pages:
-            progress.empty()
-            status.empty()
-            st.error(
-                "No readable HTML pages were found. The site may block crawlers, "
-                "require JavaScript, or be unavailable."
-            )
-            st.stop()
-
-        client = OpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT * 2)
-        for index, page in enumerate(pages, start=1):
-            progress_value = 40 + int(index / pages_scanned * 60)
-            progress.progress(
-                progress_value,
-                text=f"Analyzing page {index} of {pages_scanned}",
-            )
-            issues.extend(analyze_text_with_ai(client, page["url"], page["text"]))
-
-        progress.progress(100, text="Scan complete")
-
-    html_report = generate_html_report(
-        issues, normalized_url, pages_scanned, demo_mode=demo_mode
+    pages = crawl_website(
+        normalized_url,
+        max_pages=page_limit,
+        status_callback=update_crawl_progress,
     )
+    pages_scanned = len(pages)
+    issues: list[dict[str, str]] = []
+
+    if not pages:
+        progress.empty()
+        status.empty()
+        st.error(
+            "No readable HTML pages were found. The site may block crawlers, "
+            "require JavaScript, or be unavailable."
+        )
+        st.stop()
+
+    client = OpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT * 2)
+    for index, page in enumerate(pages, start=1):
+        progress_value = 40 + int(index / pages_scanned * 60)
+        progress.progress(
+            progress_value,
+            text=f"Analyzing page {index} of {pages_scanned}",
+        )
+        issues.extend(analyze_text_with_ai(client, page["url"], page["text"]))
+
+    progress.progress(100, text="Scan complete")
+
+    html_report = generate_html_report(issues, normalized_url, pages_scanned)
     csv_report = generate_csv_report(issues)
     st.session_state.scan_result = {
         "url": normalized_url,
@@ -951,10 +1600,11 @@ if scan_clicked:
         "pages_scanned": pages_scanned,
         "html": html_report,
         "csv": csv_report,
-        "demo_mode": demo_mode,
         "scan_time": datetime.now().astimezone().strftime("%B %d, %Y at %I:%M %p"),
     }
-    status.success("Scan complete.")
+    progress.empty()
+    status.empty()
+    st.toast("Scan complete. Your report is ready.")
 
 if result := st.session_state.get("scan_result"):
     render_report_header(result.get("scan_time"))
@@ -982,7 +1632,7 @@ if result := st.session_state.get("scan_result"):
         render_metric_card(
             "Status",
             "Completed",
-            "Demo data" if result["demo_mode"] else "Live AI analysis",
+            "Live AI analysis",
         )
 
     render_analytics(result["issues"])
@@ -1012,16 +1662,13 @@ if result := st.session_state.get("scan_result"):
     )
 
     result_table(result["issues"])
-    if show_report_preview:
-        with st.expander("Open full HTML report preview"):
-            st.html(result["html"])
 else:
     render_report_header()
     st.html(
         """
         <section class="empty-dashboard">
           <strong>Your report will appear here</strong>
-          <span>Choose a URL and scan mode in the sidebar, then start the scan.</span>
+          <span>Enter a public website URL in the sidebar, then start the scan.</span>
         </section>
         """
     )
