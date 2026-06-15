@@ -24,6 +24,7 @@ from typo_scanner import (
     crawl_website,
     generate_csv_report,
     generate_html_report,
+    get_demo_results,
     normalize_url,
 )
 
@@ -1321,6 +1322,349 @@ def inject_styles() -> None:
               left: 18px;
             }
           }
+
+          /* Original blue-and-white dashboard theme. */
+          :root {
+            --ink: #13233f;
+            --muted: #748096;
+            --line: #e1e7f0;
+            --blue: #2864f0;
+            --blue-dark: #174fc8;
+            --surface: #ffffff;
+            --canvas: #f3f6fb;
+            --green: #1d9b59;
+            --red: #ff5964;
+          }
+
+          .stApp {
+            background:
+              radial-gradient(circle at 84% 4%, rgba(58, 112, 255, .07), transparent 28rem),
+              #f3f6fb;
+            color: var(--ink);
+          }
+
+          [data-testid="stAppViewContainer"] > .main {
+            margin: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+          }
+
+          [data-testid="stMainBlockContainer"] {
+            max-width: 1450px;
+            padding: 2rem 2.3rem 3rem;
+          }
+
+          [data-testid="stSidebar"] {
+            margin: 0;
+            border: 0;
+            border-right: 1px solid #e2e8f1;
+            border-radius: 0;
+            background: #ffffff;
+            box-shadow: 12px 0 30px rgba(25, 48, 86, .045);
+            backdrop-filter: none;
+          }
+
+          [data-testid="stSidebarContent"] {
+            padding: 1.2rem .95rem 1.5rem;
+          }
+
+          [data-testid="stSidebar"] label,
+          [data-testid="stSidebar"] p,
+          [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+            color: #69768c;
+          }
+
+          .sidebar-brand {
+            margin: 0 0 14px;
+            padding: 20px 18px;
+            border: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #112e63 0%, #174fc8 100%);
+            box-shadow: 0 14px 28px rgba(26, 72, 161, .22);
+          }
+
+          .sidebar-brand strong {
+            color: #ffffff;
+            font-size: 20px;
+          }
+
+          .sidebar-brand span {
+            color: #c7d7f5;
+          }
+
+          .sidebar-section-label {
+            color: #7c8799;
+          }
+
+          [data-testid="stSidebar"] [data-baseweb="input"] > div,
+          [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            border-color: #dde4ef;
+            background: #f7f9fd;
+            box-shadow: none;
+          }
+
+          [data-testid="stSidebar"] input {
+            color: #26344c;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stExpander"] {
+            border-color: #e1e7f0;
+            background: #f8faff;
+          }
+
+          .stButton > button[kind="primary"] {
+            border: 0;
+            background: linear-gradient(135deg, #2f6bff, #1852d1);
+            box-shadow: 0 10px 22px rgba(40, 100, 240, .24);
+            color: #ffffff !important;
+          }
+
+          .stButton > button[kind="primary"]:hover {
+            background: linear-gradient(135deg, #2864f0, #1648bc);
+            box-shadow: 0 12px 26px rgba(40, 100, 240, .3);
+            color: #ffffff !important;
+          }
+
+          .stButton > button[kind="primary"] p,
+          .stButton > button[kind="primary"] span,
+          .stButton > button[kind="primary"] div {
+            color: #ffffff !important;
+            font-weight: 750 !important;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid #dce3ed;
+            border-radius: 13px;
+            background: #f1f4f9;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label {
+            display: flex;
+            flex: 1 1 0;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            margin: 0;
+            padding: 8px 10px;
+            border-radius: 9px;
+            color: #66748a;
+            font-weight: 700;
+            text-align: center;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+            background: #ffffff;
+            color: #174fc8;
+            box-shadow: 0 4px 12px rgba(25,48,86,.08);
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label p {
+            margin: 0;
+            color: inherit;
+            line-height: 1.25;
+          }
+
+          [data-testid="stSidebar"] [role="radiogroup"] label > div:first-child {
+            flex: 0 0 auto;
+          }
+
+          [data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+            border-color: #dce3ed;
+            background: #ffffff;
+            color: #58667b;
+          }
+
+          .report-header {
+            margin: 8px 0 30px;
+            text-align: center;
+          }
+
+          .report-header h1 {
+            color: #11213d;
+            font-size: clamp(38px, 4vw, 56px);
+            font-weight: 800;
+            letter-spacing: -.055em;
+          }
+
+          .report-header p {
+            color: #7c8799;
+            font-size: 14px;
+          }
+
+          .metric-card {
+            min-height: 124px;
+            padding: 20px;
+            border: 1px solid #e1e7f0;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 10px 28px rgba(25, 48, 86, .06);
+            backdrop-filter: none;
+          }
+
+          .metric-label {
+            color: #7a879c;
+          }
+
+          .metric-value {
+            color: #13233f;
+          }
+
+          .metric-value.is-domain {
+            color: #13233f;
+          }
+
+          .metric-note {
+            color: #98a2b3;
+          }
+
+          .dashboard-card {
+            min-height: 310px;
+            padding: 20px;
+            border: 1px solid #e1e7f0;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 10px 28px rgba(25, 48, 86, .06);
+            backdrop-filter: none;
+          }
+
+          .dashboard-card h3 {
+            color: #172641;
+          }
+
+          .donut-center {
+            background: #ffffff;
+            box-shadow: inset 0 0 0 1px #e1e7f0;
+          }
+
+          .bar-track {
+            background: #edf1f7;
+          }
+
+          .bar-fill {
+            background: linear-gradient(90deg, #ff5360, #ff747e);
+          }
+
+          .section-heading {
+            color: #142440;
+          }
+
+          .section-copy {
+            color: #7d899c;
+          }
+
+          .stDownloadButton > button {
+            border-color: #dce3ed;
+            background: #ffffff;
+            color: #34445e;
+          }
+
+          .stDownloadButton > button:hover {
+            border-color: #2f6bff;
+            background: #f4f7ff;
+            color: #174fc8;
+          }
+
+          .results-shell {
+            border: 1px solid #e1e7f0;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 10px 28px rgba(25, 48, 86, .06);
+          }
+
+          .results-table th {
+            background: #13233f;
+            color: #ffffff;
+          }
+
+          .results-table td {
+            border-color: #edf0f5;
+            color: #5d6a7f;
+          }
+
+          .results-table a {
+            color: #2464dc;
+          }
+
+          .empty-dashboard {
+            border-color: #d7dfeb;
+            background: rgba(255,255,255,.72);
+          }
+
+          .empty-dashboard strong {
+            color: #142440;
+          }
+
+          .empty-dashboard span {
+            color: #7d899c;
+          }
+
+          .model-card {
+            border-color: #e1e7f0;
+            background: #f7f9fd;
+          }
+
+          .model-card span {
+            color: #8a95a7;
+          }
+
+          .model-card strong {
+            color: #162a4d;
+          }
+
+          .connection-card {
+            border-color: #d9e6fb;
+            background: #f2f7ff;
+            color: #31598c;
+          }
+
+          .connection-dot {
+            background: #2f6bff;
+            box-shadow: 0 0 0 4px rgba(47, 107, 255, .13);
+          }
+
+          .production-note {
+            border-color: #e0e6f0;
+            background: #f8faff;
+            color: #748096;
+          }
+
+          [data-testid="stAlert"] {
+            border-color: #dfe6ef;
+            background: #ffffff;
+            color: #536177;
+          }
+
+          body:has([data-testid="stSidebar"][aria-expanded="false"])
+          [data-testid="stAppViewContainer"] > .main {
+            margin: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+          }
+
+          [data-testid="collapsedControl"] {
+            top: 20px;
+            left: 20px;
+            border-color: #dce3ed;
+            background: #ffffff;
+            box-shadow: 0 8px 22px rgba(25,48,86,.1);
+          }
+
+          @media (max-width: 900px) {
+            [data-testid="stMainBlockContainer"] {
+              padding: 1.35rem .95rem 2rem;
+            }
+
+            body:has([data-testid="stSidebar"][aria-expanded="false"])
+            [data-testid="stAppViewContainer"] > .main {
+              margin: 0 !important;
+            }
+          }
         </style>
         """
     )
@@ -1626,6 +1970,14 @@ with st.sidebar:
     )
     st.session_state.last_target_url = target_url
     st.html('<div class="sidebar-section-label">Scan options</div>')
+    scan_mode = st.radio(
+        "Analysis mode",
+        options=["AI Scan", "Demo Preview"],
+        index=0 if get_secret("OPENAI_API_KEY") else 1,
+        horizontal=True,
+        help="AI Scan uses your API key. Demo Preview uses sample data.",
+    )
+    demo_mode = scan_mode == "Demo Preview"
     page_limit = st.slider("Maximum pages", 1, MAX_PAGES, min(10, MAX_PAGES))
     crawl_depth = st.segmented_control(
         "Crawl depth",
@@ -1709,60 +2061,68 @@ if scan_clicked:
 
     normalized_url = url_or_error
     api_key = get_secret("OPENAI_API_KEY")
-    if not api_key:
+    if not demo_mode and not api_key:
         st.error(
             "OPENAI_API_KEY is not configured. Add it to your local .env file "
-            "or Streamlit app secrets before starting a scan."
+            "or Streamlit app secrets, or choose Demo Preview."
         )
         st.stop()
 
     progress = st.progress(0, text="Preparing scan...")
     status = st.empty()
 
-    status.info("Crawling internal pages...")
+    if demo_mode:
+        status.info("Preparing sample report...")
+        issues = get_demo_results(normalized_url)
+        pages_scanned = len({issue["page_url"] for issue in issues})
+        progress.progress(100, text="Demo preview ready")
+    else:
+        status.info("Crawling internal pages...")
 
-    def update_crawl_progress(pages_found: int, current_url: str) -> None:
-        percent = min(40, max(2, int(pages_found / effective_page_limit * 40)))
-        progress.progress(
-            percent,
-            text=f"Collected {pages_found} page(s): {current_url}",
-        )
+        def update_crawl_progress(pages_found: int, current_url: str) -> None:
+            percent = min(40, max(2, int(pages_found / effective_page_limit * 40)))
+            progress.progress(
+                percent,
+                text=f"Collected {pages_found} page(s): {current_url}",
+            )
 
-    crawl_options = {
-        "max_pages": effective_page_limit,
-        "status_callback": update_crawl_progress,
-    }
-    supported_crawl_options = inspect.signature(crawl_website).parameters
-    if "max_depth" in supported_crawl_options:
-        crawl_options["max_depth"] = effective_depth
-    if "exclude_paths" in supported_crawl_options:
-        crawl_options["exclude_paths"] = exclude_paths
+        crawl_options = {
+            "max_pages": effective_page_limit,
+            "status_callback": update_crawl_progress,
+        }
+        supported_crawl_options = inspect.signature(crawl_website).parameters
+        if "max_depth" in supported_crawl_options:
+            crawl_options["max_depth"] = effective_depth
+        if "exclude_paths" in supported_crawl_options:
+            crawl_options["exclude_paths"] = exclude_paths
 
-    pages = crawl_website(normalized_url, **crawl_options)
-    pages_scanned = len(pages)
-    issues: list[dict[str, str]] = []
+        pages = crawl_website(normalized_url, **crawl_options)
+        pages_scanned = len(pages)
+        issues: list[dict[str, str]] = []
 
-    if not pages:
-        progress.empty()
-        status.empty()
-        st.error(
-            "No readable HTML pages were found. The site may block crawlers, "
-            "require JavaScript, or be unavailable."
-        )
-        st.stop()
+        if not pages:
+            progress.empty()
+            status.empty()
+            st.error(
+                "No readable HTML pages were found. The site may block crawlers, "
+                "require JavaScript, or be unavailable."
+            )
+            st.stop()
 
-    client = OpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT * 2)
-    for index, page in enumerate(pages, start=1):
-        progress_value = 40 + int(index / pages_scanned * 60)
-        progress.progress(
-            progress_value,
-            text=f"Analyzing page {index} of {pages_scanned}",
-        )
-        issues.extend(analyze_text_with_ai(client, page["url"], page["text"]))
+        client = OpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT * 2)
+        for index, page in enumerate(pages, start=1):
+            progress_value = 40 + int(index / pages_scanned * 60)
+            progress.progress(
+                progress_value,
+                text=f"Analyzing page {index} of {pages_scanned}",
+            )
+            issues.extend(analyze_text_with_ai(client, page["url"], page["text"]))
 
-    progress.progress(100, text="Scan complete")
+        progress.progress(100, text="Scan complete")
 
-    html_report = generate_html_report(issues, normalized_url, pages_scanned)
+    html_report = generate_html_report(
+        issues, normalized_url, pages_scanned, demo_mode=demo_mode
+    )
     csv_report = generate_csv_report(issues)
     st.session_state.scan_result = {
         "url": normalized_url,
@@ -1772,6 +2132,7 @@ if scan_clicked:
         "csv": csv_report,
         "scan_time": datetime.now().astimezone().strftime("%B %d, %Y at %I:%M %p"),
         "scan_profile": request_profile,
+        "demo_mode": demo_mode,
     }
     progress.empty()
     status.empty()
@@ -1803,7 +2164,7 @@ if result := st.session_state.get("scan_result"):
         render_metric_card(
             "Status",
             "Completed",
-            "Live AI analysis",
+            "Demo preview" if result["demo_mode"] else "Live AI analysis",
         )
 
     render_analytics(result["issues"])
