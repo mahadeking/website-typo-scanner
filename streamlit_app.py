@@ -1208,6 +1208,118 @@ def inject_styles() -> None:
               max-width: none;
             }
           }
+          .url-hint {
+            margin: -4px 0 2px;
+            color: #8a9393;
+            font-size: 10px;
+            line-height: 1.4;
+          }
+
+          .connection-card {
+            display: grid;
+            grid-template-columns: 9px 1fr;
+            gap: 9px;
+            align-items: center;
+            margin-top: 10px;
+            padding: 11px 12px;
+            border: 1px solid rgba(160, 190, 105, .35);
+            border-radius: 12px;
+            background: rgba(244, 250, 233, .75);
+            color: #566746;
+            font-size: 11px;
+            font-weight: 650;
+          }
+
+          .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #91c737;
+            box-shadow: 0 0 0 4px rgba(145, 199, 55, .15);
+          }
+
+          [data-testid="stSidebar"] [data-testid="stExpander"] {
+            border-color: rgba(166,180,181,.35);
+            background: rgba(255,255,255,.48);
+          }
+
+          /* Sidebar state and transition fixes. */
+          [data-testid="stSidebar"],
+          [data-testid="stSidebar"] > div:first-child,
+          [data-testid="stAppViewContainer"] > .main {
+            transition:
+              width .28s ease,
+              min-width .28s ease,
+              max-width .28s ease,
+              margin .28s ease,
+              border-radius .28s ease,
+              opacity .2s ease,
+              transform .28s ease;
+          }
+
+          [data-testid="stSidebar"][aria-expanded="true"],
+          [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
+            width: 300px;
+            min-width: 300px;
+            max-width: 300px;
+          }
+
+          [data-testid="stSidebar"][aria-expanded="false"] {
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            margin: 0 !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateX(-18px);
+          }
+
+          [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+          }
+
+          body:has([data-testid="stSidebar"][aria-expanded="false"])
+          [data-testid="stAppViewContainer"] > .main {
+            margin: 24px 28px 28px !important;
+            border: 1px solid rgba(255,255,255,.82) !important;
+            border-radius: 26px !important;
+          }
+
+          body:has([data-testid="stSidebar"][aria-expanded="false"])
+          [data-testid="stMainBlockContainer"] {
+            max-width: 1540px;
+            margin-inline: auto;
+          }
+
+          [data-testid="collapsedControl"] {
+            top: 44px;
+            left: 42px;
+            z-index: 1000;
+            border: 1px solid rgba(161,176,177,.4);
+            border-radius: 12px;
+            background: rgba(255,255,255,.86);
+            box-shadow: 0 8px 22px rgba(74,92,95,.1);
+            backdrop-filter: blur(14px);
+          }
+
+          @media (max-width: 900px) {
+            body:has([data-testid="stSidebar"][aria-expanded="false"])
+            [data-testid="stAppViewContainer"] > .main {
+              margin: 8px !important;
+              border-radius: 19px !important;
+            }
+
+            [data-testid="collapsedControl"] {
+              top: 18px;
+              left: 18px;
+            }
+          }
         </style>
         """
     )
@@ -1282,6 +1394,9 @@ def require_optional_password() -> None:
 
 def is_public_website_url(url: str) -> tuple[bool, str]:
     """Reject malformed URLs and addresses that resolve to private networks."""
+    url = url.strip()
+    if url and "://" not in url:
+        url = f"https://{url}"
     normalized = normalize_url(url)
     if not normalized:
         return False, "Enter a complete HTTP or HTTPS URL."
@@ -1503,11 +1618,49 @@ with st.sidebar:
             "last_target_url", "https://themodernmedicinegroup.com"
         ),
         placeholder="https://example.com",
-        help="Enter a public homepage URL, including https://.",
+        help="Enter a domain or complete public URL. HTTPS is added automatically.",
+    )
+    st.html(
+        '<div class="url-hint">Example: example.com or https://example.com</div>'
     )
     st.session_state.last_target_url = target_url
     st.html('<div class="sidebar-section-label">Scan options</div>')
     page_limit = st.slider("Maximum pages", 1, MAX_PAGES, min(10, MAX_PAGES))
+    crawl_depth = st.segmented_control(
+        "Crawl depth",
+        options=[1, 2, 3],
+        default=2,
+        help="Higher depth follows links farther from the homepage.",
+    )
+    with st.expander("Advanced options"):
+        exclude_text = st.text_input(
+            "Exclude URL paths",
+            placeholder="/blog, /author, /privacy",
+            help="Comma-separated path fragments that the crawler should skip.",
+        )
+        request_profile = st.selectbox(
+            "Scan profile",
+            ["Balanced", "Quick", "Thorough"],
+            help="Adjusts the effective page count and crawl depth.",
+        )
+        st.caption(
+            "Balanced is recommended. Quick scans fewer nearby pages; Thorough "
+            "follows links deeper and may use more API tokens."
+        )
+
+    if request_profile == "Quick":
+        effective_page_limit = min(page_limit, 5)
+        effective_depth = 1
+    elif request_profile == "Thorough":
+        effective_page_limit = page_limit
+        effective_depth = 3
+    else:
+        effective_page_limit = page_limit
+        effective_depth = int(crawl_depth or 2)
+
+    exclude_paths = [
+        path.strip() for path in exclude_text.split(",") if path.strip()
+    ]
     scan_clicked = st.button("Scan Website", type="primary", width="stretch")
     if st.button("Clear current results", width="stretch"):
         st.session_state.pop("scan_result", None)
@@ -1522,8 +1675,18 @@ with st.sidebar:
         </div>
         """
     )
-    api_status = "Connected" if get_secret("OPENAI_API_KEY") else "Not configured"
-    st.caption(f"API status: {api_status}")
+    api_connected = bool(get_secret("OPENAI_API_KEY"))
+    if api_connected:
+        st.html(
+            """
+            <div class="connection-card">
+              <span class="connection-dot"></span>
+              <span>OpenAI API connected and ready</span>
+            </div>
+            """
+        )
+    else:
+        st.warning("OpenAI API key is not configured.")
     st.html(
         """
         <div class="production-note">
@@ -1558,7 +1721,7 @@ if scan_clicked:
     status.info("Crawling internal pages...")
 
     def update_crawl_progress(pages_found: int, current_url: str) -> None:
-        percent = min(40, max(2, int(pages_found / page_limit * 40)))
+        percent = min(40, max(2, int(pages_found / effective_page_limit * 40)))
         progress.progress(
             percent,
             text=f"Collected {pages_found} page(s): {current_url}",
@@ -1566,7 +1729,9 @@ if scan_clicked:
 
     pages = crawl_website(
         normalized_url,
-        max_pages=page_limit,
+        max_pages=effective_page_limit,
+        max_depth=effective_depth,
+        exclude_paths=exclude_paths,
         status_callback=update_crawl_progress,
     )
     pages_scanned = len(pages)
@@ -1601,6 +1766,7 @@ if scan_clicked:
         "html": html_report,
         "csv": csv_report,
         "scan_time": datetime.now().astimezone().strftime("%B %d, %Y at %I:%M %p"),
+        "scan_profile": request_profile,
     }
     progress.empty()
     status.empty()
