@@ -42,7 +42,7 @@ Open `.env` and replace the placeholder value:
 
 ```dotenv
 OPENAI_API_KEY=your_real_api_key_here
-OPENAI_MODEL=gpt-5.5
+OPENAI_MODEL=gpt-5.4-mini
 APP_PASSWORD=choose_a_private_access_password
 ```
 
@@ -89,7 +89,7 @@ in this folder.
 
 ```toml
 OPENAI_API_KEY = "your_real_api_key_here"
-OPENAI_MODEL = "gpt-5.5"
+OPENAI_MODEL = "gpt-5.4-mini"
 APP_PASSWORD = "choose_a_private_access_password"
 ```
 

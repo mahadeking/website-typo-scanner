@@ -45,7 +45,7 @@ MAX_PAGES = 25
 MAX_CHARS_PER_PAGE = 8000
 REQUEST_TIMEOUT = 15
 MAX_CRAWL_DEPTH = 2
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.5")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
 
 OUTPUT_DIRECTORY = Path(__file__).resolve().parent
 HTML_REPORT_PATH = OUTPUT_DIRECTORY / "typo_report.html"
@@ -67,6 +67,47 @@ ALLOWED_ISSUE_TYPES = {
     "Grammar / Wording",
     "Repeated Words",
     "Brand / Name Inconsistency",
+}
+
+ISSUE_TYPE_ALIASES = {
+    "spelling": "Spelling Error",
+    "spelling error": "Spelling Error",
+    "typo": "Spelling Error",
+    "grammar": "Grammar / Wording",
+    "grammar / wording": "Grammar / Wording",
+    "grammar/wording": "Grammar / Wording",
+    "awkward wording": "Grammar / Wording",
+    "repeated word": "Repeated Words",
+    "repeated words": "Repeated Words",
+    "brand inconsistency": "Brand / Name Inconsistency",
+    "name inconsistency": "Brand / Name Inconsistency",
+    "brand / name inconsistency": "Brand / Name Inconsistency",
+    "brand/name inconsistency": "Brand / Name Inconsistency",
+}
+
+ISSUE_OUTPUT_SCHEMA = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "page_url": {"type": "string"},
+            "issue_type": {
+                "type": "string",
+                "enum": sorted(ALLOWED_ISSUE_TYPES),
+            },
+            "typo_found": {"type": "string"},
+            "context_sentence": {"type": "string"},
+            "suggested_fix": {"type": "string"},
+        },
+        "required": [
+            "page_url",
+            "issue_type",
+            "typo_found",
+            "context_sentence",
+            "suggested_fix",
+        ],
+        "additionalProperties": False,
+    },
 }
 
 IGNORED_TAGS = [
@@ -330,6 +371,10 @@ def parse_ai_json(raw_response: str) -> list[dict[str, str]]:
             continue
 
         issue = {key: str(item.get(key, "")).strip() for key in required_keys}
+        normalized_type = re.sub(r"\s+", " ", issue["issue_type"]).strip().lower()
+        issue["issue_type"] = ISSUE_TYPE_ALIASES.get(
+            normalized_type, issue["issue_type"]
+        )
         if issue["issue_type"] not in ALLOWED_ISSUE_TYPES:
             continue
         if not all(issue.values()):
@@ -339,27 +384,100 @@ def parse_ai_json(raw_response: str) -> list[dict[str, str]]:
     return valid_issues
 
 
+def find_repeated_word_issues(page_url: str, page_text: str) -> list[dict[str, str]]:
+    """Detect obvious consecutive repeated words without using the API."""
+    issues: list[dict[str, str]] = []
+    pattern = re.compile(r"\b([A-Za-z][A-Za-z'-]{1,})\s+\1\b", re.IGNORECASE)
+
+    for match in pattern.finditer(page_text):
+        start = max(
+            page_text.rfind(".", 0, match.start()),
+            page_text.rfind("!", 0, match.start()),
+            page_text.rfind("?", 0, match.start()),
+        )
+        end_candidates = [
+            position
+            for punctuation in ".!?"
+            if (position := page_text.find(punctuation, match.end())) != -1
+        ]
+        end = min(end_candidates) + 1 if end_candidates else min(
+            len(page_text), match.end() + 120
+        )
+        context = page_text[start + 1 : end].strip()
+        repeated = match.group(0)
+        issues.append(
+            {
+                "page_url": page_url,
+                "issue_type": "Repeated Words",
+                "typo_found": repeated,
+                "context_sentence": context or repeated,
+                "suggested_fix": match.group(1),
+            }
+        )
+
+    return issues[:10]
+
+
 def analyze_text_with_ai(
-    client: OpenAI, page_url: str, page_text: str
+    client: OpenAI,
+    page_url: str,
+    page_text: str,
+    model: str = OPENAI_MODEL,
+    error_callback: Any | None = None,
 ) -> list[dict[str, str]]:
     """Ask OpenAI to analyze one page and return validated issue objects."""
     user_input = f"Page URL: {page_url}\n\nWebsite text:\n{page_text}"
 
     try:
         response = client.responses.create(
-            model=OPENAI_MODEL,
+            model=model,
             reasoning={"effort": "low"},
             instructions=SYSTEM_PROMPT,
             input=user_input,
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "website_copy_issues",
+                    "schema": ISSUE_OUTPUT_SCHEMA,
+                    "strict": True,
+                }
+            },
+            max_output_tokens=4000,
         )
     except Exception as error:
         print(f"  AI analysis failed for {page_url}: {error}")
-        return []
+        if error_callback:
+            error_callback(page_url, f"API request failed: {error}")
+        return find_repeated_word_issues(page_url, page_text)
 
     issues = parse_ai_json(response.output_text)
+    if not issues and response.output_text.strip() not in {"", "[]"}:
+        message = "The AI response could not be parsed into valid findings."
+        print(f"  {message} Page: {page_url}")
+        if error_callback:
+            error_callback(page_url, message)
+
     for issue in issues:
         # The crawler's URL is authoritative if the model changes or omits it.
         issue["page_url"] = page_url
+
+    existing = {
+        (
+            issue["issue_type"].lower(),
+            issue["typo_found"].lower(),
+            issue["context_sentence"].lower(),
+        )
+        for issue in issues
+    }
+    for local_issue in find_repeated_word_issues(page_url, page_text):
+        key = (
+            local_issue["issue_type"].lower(),
+            local_issue["typo_found"].lower(),
+            local_issue["context_sentence"].lower(),
+        )
+        if key not in existing:
+            issues.append(local_issue)
+
     return issues
 
 

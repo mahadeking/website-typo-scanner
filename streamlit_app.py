@@ -2028,6 +2028,8 @@ def result_table(issues: list[dict[str, str]]) -> None:
 inject_styles()
 require_optional_password()
 
+ACTIVE_OPENAI_MODEL = get_secret("OPENAI_MODEL") or OPENAI_MODEL
+
 with st.sidebar:
     st.html(
         """
@@ -2109,7 +2111,7 @@ with st.sidebar:
         f"""
         <div class="model-card">
           <span>Active AI model</span>
-          <strong>{html.escape(OPENAI_MODEL)}</strong>
+          <strong>{html.escape(ACTIVE_OPENAI_MODEL)}</strong>
         </div>
         """
     )
@@ -2195,13 +2197,26 @@ if scan_clicked:
             st.stop()
 
         client = OpenAI(api_key=api_key, timeout=REQUEST_TIMEOUT * 2)
+        analysis_failures: list[tuple[str, str]] = []
+
+        def record_analysis_failure(page_url: str, message: str) -> None:
+            analysis_failures.append((page_url, message))
+
         for index, page in enumerate(pages, start=1):
             progress_value = 40 + int(index / pages_scanned * 60)
             progress.progress(
                 progress_value,
                 text=f"Analyzing page {index} of {pages_scanned}",
             )
-            issues.extend(analyze_text_with_ai(client, page["url"], page["text"]))
+            issues.extend(
+                analyze_text_with_ai(
+                    client,
+                    page["url"],
+                    page["text"],
+                    model=ACTIVE_OPENAI_MODEL,
+                    error_callback=record_analysis_failure,
+                )
+            )
 
         progress.progress(100, text="Scan complete")
 
@@ -2218,12 +2233,20 @@ if scan_clicked:
         "scan_time": datetime.now().astimezone().strftime("%B %d, %Y at %I:%M %p"),
         "scan_profile": request_profile,
         "demo_mode": demo_mode,
+        "analysis_failures": analysis_failures if not demo_mode else [],
     }
     progress.empty()
     status.empty()
     st.toast("Scan complete. Your report is ready.")
 
 if result := st.session_state.get("scan_result"):
+    if result.get("analysis_failures"):
+        failed_count = len(result["analysis_failures"])
+        st.warning(
+            f"{failed_count} page(s) could not be analyzed by the API. "
+            "The report may be incomplete; check your model name, API billing, "
+            "and Streamlit logs."
+        )
     render_report_header(result.get("scan_time"))
     summary_columns = st.columns(4)
     with summary_columns[0]:
