@@ -2191,8 +2191,10 @@ if scan_clicked:
             progress.empty()
             status.empty()
             st.error(
-                "No readable HTML pages were found. The site may block crawlers, "
-                "require JavaScript, or be unavailable."
+                "No readable pages were found. The website may redirect in an "
+                "unusual way, block automated requests, require JavaScript, or "
+                "serve its copy through scripts that this lightweight scanner "
+                "cannot read yet."
             )
             st.stop()
 
@@ -2242,10 +2244,10 @@ if scan_clicked:
 if result := st.session_state.get("scan_result"):
     if result.get("analysis_failures"):
         failed_count = len(result["analysis_failures"])
-        st.warning(
-            f"{failed_count} page(s) could not be analyzed by the API. "
-            "The report may be incomplete; check your model name, API billing, "
-            "and Streamlit logs."
+        st.info(
+            f"{failed_count} page(s) returned an incomplete AI response or could "
+            "not be fully reviewed. The scan still completed, but this report may "
+            "not include every possible issue from those pages."
         )
     render_report_header(result.get("scan_time"))
     summary_columns = st.columns(4)

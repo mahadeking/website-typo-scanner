@@ -194,7 +194,9 @@ def is_internal_link(url: str, base_url: str) -> bool:
 
     parsed = urlsplit(normalized)
     base_parsed = urlsplit(normalized_base)
-    if parsed.netloc != base_parsed.netloc:
+    parsed_host = parsed.netloc.removeprefix("www.")
+    base_host = base_parsed.netloc.removeprefix("www.")
+    if parsed_host != base_host:
         return False
 
     suffix = Path(parsed.path).suffix.lower()
@@ -258,18 +260,39 @@ def crawl_website(
         print("The BASE_URL is invalid. No pages were crawled.")
         return []
 
+    start_parts = urlsplit(start_url)
+    start_host = start_parts.netloc
+    alternate_host = (
+        start_host.removeprefix("www.")
+        if start_host.startswith("www.")
+        else f"www.{start_host}"
+    )
+    alternate_start_url = urlunsplit(
+        (start_parts.scheme, alternate_host, start_parts.path, "", "")
+    )
+
     session = requests.Session()
     session.headers.update(
         {
             "User-Agent": (
-                "Mozilla/5.0 (compatible; InternalWebsiteTypoScanner/1.0; "
-                "+local-agency-quality-check)"
-            )
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/126.0.0.0 Safari/537.36"
+            ),
+            "Accept": (
+                "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                "image/avif,image/webp,*/*;q=0.8"
+            ),
+            "Accept-Language": "en-US,en;q=0.9",
         }
     )
 
-    queue: deque[tuple[str, int]] = deque([(start_url, 0)])
-    queued = {start_url}
+    seed_urls = [start_url]
+    if alternate_start_url != start_url:
+        seed_urls.append(alternate_start_url)
+
+    queue: deque[tuple[str, int]] = deque((url, 0) for url in seed_urls)
+    queued = set(seed_urls)
     visited: set[str] = set()
     pages: list[dict[str, str]] = []
     excluded_fragments = [
@@ -296,7 +319,8 @@ def crawl_website(
             continue
 
         content_type = response.headers.get("Content-Type", "").lower()
-        if "text/html" not in content_type:
+        looks_like_html = "<html" in response.text[:1000].lower()
+        if "text/html" not in content_type and not looks_like_html:
             continue
 
         final_url = normalize_url(response.url)
@@ -388,8 +412,42 @@ def find_repeated_word_issues(page_url: str, page_text: str) -> list[dict[str, s
     """Detect obvious consecutive repeated words without using the API."""
     issues: list[dict[str, str]] = []
     pattern = re.compile(r"\b([A-Za-z][A-Za-z'-]{1,})\s+\1\b", re.IGNORECASE)
+    obvious_repeated_words = {
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "at",
+        "be",
+        "but",
+        "for",
+        "from",
+        "in",
+        "is",
+        "it",
+        "of",
+        "on",
+        "or",
+        "our",
+        "that",
+        "the",
+        "their",
+        "this",
+        "to",
+        "we",
+        "with",
+        "you",
+        "your",
+    }
 
     for match in pattern.finditer(page_text):
+        repeated_word = match.group(1)
+        if repeated_word.lower() not in obvious_repeated_words:
+            continue
+        if repeated_word[:1].isupper():
+            continue
+
         start = max(
             page_text.rfind(".", 0, match.start()),
             page_text.rfind("!", 0, match.start()),
@@ -411,7 +469,7 @@ def find_repeated_word_issues(page_url: str, page_text: str) -> list[dict[str, s
                 "issue_type": "Repeated Words",
                 "typo_found": repeated,
                 "context_sentence": context or repeated,
-                "suggested_fix": match.group(1),
+                "suggested_fix": repeated_word,
             }
         )
 
