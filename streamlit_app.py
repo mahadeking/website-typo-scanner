@@ -10,7 +10,7 @@ import re
 import socket
 from collections import Counter
 from datetime import datetime
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlunsplit
 
 import streamlit as st
 from openai import OpenAI
@@ -1746,6 +1746,19 @@ def inject_styles() -> None:
           div[data-baseweb="slider"] > div > div {
             background-color: #2864f0;
           }
+
+          [data-testid="stSidebar"] [data-testid="stSlider"] {
+            color: #69768c !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSlider"] * {
+            color: #69768c !important;
+          }
+
+          [data-testid="stSidebar"] [data-testid="stSlider"] div[role="slider"],
+          [data-testid="stSidebar"] [data-testid="stSlider"] div[role="slider"] * {
+            color: transparent !important;
+          }
         </style>
         """
     )
@@ -1835,22 +1848,57 @@ def is_public_website_url(url: str) -> tuple[bool, str]:
     if hostname.lower() == "localhost":
         return False, "Localhost URLs cannot be scanned from the hosted app."
 
-    try:
-        addresses = {
-            result[4][0]
-            for result in socket.getaddrinfo(
-                hostname, parsed.port or (443 if parsed.scheme == "https" else 80)
+    candidate_urls = [normalized]
+    if not hostname.startswith("www."):
+        www_url = urlunsplit(
+            (
+                parsed.scheme,
+                f"www.{parsed.netloc}",
+                parsed.path or "/",
+                "",
+                "",
             )
-        }
-    except socket.gaierror:
-        return False, "The website hostname could not be resolved."
+        )
+        candidate_urls.append(normalize_url(www_url))
 
-    for address in addresses:
-        ip = ipaddress.ip_address(address)
-        if not ip.is_global:
-            return False, "Private, local, or reserved network addresses are blocked."
+    last_private_error = ""
+    for candidate_url in dict.fromkeys(candidate_urls):
+        candidate = urlsplit(candidate_url)
+        candidate_host = candidate.hostname or ""
+        try:
+            addresses = {
+                result[4][0]
+                for result in socket.getaddrinfo(
+                    candidate_host,
+                    candidate.port
+                    or (443 if candidate.scheme == "https" else 80),
+                )
+            }
+        except socket.gaierror:
+            continue
 
-    return True, normalized
+        blocked_private = False
+        for address in addresses:
+            ip = ipaddress.ip_address(address)
+            if not ip.is_global:
+                blocked_private = True
+                last_private_error = (
+                    "Private, local, or reserved network addresses are blocked."
+                )
+                break
+        if blocked_private:
+            continue
+
+        return True, candidate_url
+
+    if last_private_error:
+        return False, last_private_error
+
+    return (
+        False,
+        "This domain could not be found. Check the spelling, try the full "
+        "website URL from your browser, or confirm the domain is publicly live.",
+    )
 
 
 def issue_breakdown(issues: list[dict[str, str]]) -> None:
@@ -2060,7 +2108,7 @@ with st.sidebar:
         help="AI Scan uses your API key. Demo Preview uses sample data.",
     )
     demo_mode = scan_mode == "Demo Preview"
-    page_limit = st.slider("Maximum pages", 1, MAX_PAGES, min(10, MAX_PAGES))
+    page_limit = st.slider("Maximum pages", 1, MAX_PAGES, 1)
     crawl_depth = st.selectbox(
         "Crawl depth",
         options=[1, 2, 3],
