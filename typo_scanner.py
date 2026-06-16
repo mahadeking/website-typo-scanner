@@ -45,7 +45,7 @@ MAX_PAGES = 25
 MAX_CHARS_PER_PAGE = 8000
 REQUEST_TIMEOUT = 15
 MAX_CRAWL_DEPTH = 2
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.5")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
 
 OUTPUT_DIRECTORY = Path(__file__).resolve().parent
 HTML_REPORT_PATH = OUTPUT_DIRECTORY / "typo_report.html"
